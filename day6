@@ -1,0 +1,58 @@
+// Didn't like this one! Not that hard but I was messy :(
+
+const data = /*data here*/
+
+const re = /\n{2}/;
+const splitData = data.split(re);
+
+const groupCounts = [];
+
+const groupsRough = splitData.map(x => {
+  return x.split("\n");
+});
+
+const groups = groupsRough.map(group => {
+  let answers = group.map(y => {
+    return y.split("");
+  });
+  return answers;
+});
+
+// const countAnswers = (group) => {
+//   const groupAnswers = new Set();
+  
+//   for (let ans of group) {
+//     if (ans !== "\n") {
+//       groupAnswers.add(ans);
+//     };
+//   }
+//   return groupAnswers.size;
+// }
+
+const countAnswers = (group) => {
+  const size = group.length;
+  const answers = {};
+  let validAnswers = 0
+
+  for (let person of group) {
+    for (let answer of person) {
+      if (answers[answer]) {
+        answers[answer] += 1;
+      } else {
+        answers[answer] = 1;
+      };
+
+      if (answers[answer] === size) {
+        validAnswers++;
+      }
+    }
+  }
+
+  return validAnswers
+}
+
+for (let group of groups) {
+  groupCounts.push(countAnswers(group));
+};
+
+console.log(groupCounts.reduce((a, c) => a+c))
