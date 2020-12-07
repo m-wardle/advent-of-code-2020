@@ -36,12 +36,7 @@ const countAnswers = (group) => {
 
   for (let person of group) {
     for (let answer of person) {
-      if (answers[answer]) {
-        answers[answer] += 1;
-      } else {
-        answers[answer] = 1;
-      };
-
+     (answers[answer] ? answers[answer]++ : answers[answer] = 1);
       if (answers[answer] === size) {
         validAnswers++;
       }
