@@ -1,0 +1,52 @@
+const data = /* data goes here */
+
+const re = /(bags)|(bag)|\./g;
+const cleanData = data.replace(re, "");
+const splitData = cleanData.split("\n");
+
+
+const stepOne = splitData.map(x => {
+  return x.split(" contain ")
+});
+
+const stepTwo = stepOne.map(x => {
+  return [x[0], x[1].split(", ")]
+});
+
+const object = {};
+
+stepTwo.forEach(x => {
+  let x0Trim = x[0].trim();
+  object[x0Trim] = {};
+  x[1].forEach(y => {
+    let split = [y.slice(0, 1), y.slice(2)]
+    object[x0Trim][split[1].trim()] = parseInt(split[0]);
+  })
+});
+
+const findBagHolders = (s, object)=> {
+  for (item in object) {
+    for (let b of s) {
+      if (object[item][b]) {
+        s.add(item);
+      }
+    }
+  };
+  
+  return s
+};
+
+const recursiveFind = (s, fn, obj) => {
+  let oldSet = new Set(s);
+  let newSet = fn(s, obj);
+
+  if (oldSet.size === newSet.size) {
+    return oldSet.size;
+  } else {
+    return recursiveFind(newSet, fn, obj);
+  }
+}
+
+const bagSet = new Set(["shiny gold"]);
+
+console.log(recursiveFind(bagSet, findBagHolders, object) - 1)
