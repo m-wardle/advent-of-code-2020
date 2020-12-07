@@ -1,0 +1,50 @@
+// Removed input data for brevity.
+
+const data = /*data here*/;
+
+const splitData = data.split("\n");
+const tickets = splitData.map(x => {
+  x = x.split("");
+  return x;
+});
+const seatID = [];
+// const rowFirst = 0;
+// const rowLast = 127
+
+const findID = (ticket) => {
+  let row = [0, 127];
+  let col = [0, 7];
+  for (let i = 0; i < ticket.length; i++) {
+    if (i < 7) {
+      if (ticket[i] === "F") {
+        row[1] = row[1] - (row[1] + 1 - row[0]) / 2;
+      } else {
+        row[0] = row[0] + (row[1] + 1 - row[0]) / 2;
+      };
+    } else {
+      if (ticket[i] === "L") {
+        col[1] = col[1] - (col[1] + 1 - col[0]) / 2;
+      } else {
+        col[0] = col[0] + (col[1] + 1 - col[0]) / 2;
+      };
+    }
+  }
+  
+  return row[0] * 8 + col[0];
+};
+
+for (let ticket of tickets) {
+  seatID.push(findID(ticket));
+};
+
+// console.log(seatID.reduce((acc, val) => {return Math.max(acc, val)}));
+
+const findMissingSeat = (seats) => {
+  seats = seats.sort((a, b) => a - b);
+  let ans = seats.filter((seat, i, arr) => {
+    return seat !== arr[i-1] + 1;
+  });
+  return ans[1] - 1;
+};
+
+console.log(findMissingSeat(seatID))
