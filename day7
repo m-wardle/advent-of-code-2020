@@ -50,3 +50,16 @@ const recursiveFind = (s, fn, obj) => {
 const bagSet = new Set(["shiny gold"]);
 
 console.log(recursiveFind(bagSet, findBagHolders, object) - 1)
+
+const findTotalBags = (bag) => {
+  let count = 0;
+  for (let item in bag) {
+    if (item !== "other") {
+      count += bag[item];
+      count += bag[item] * findTotalBags(object[item]);
+    };
+  };
+  return count;
+}
+
+console.log(findTotalBags(object["shiny gold"]))
