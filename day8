@@ -1,0 +1,76 @@
+// this is hideous. disgusting. and abomination in the eyes of gods and men. i can only hide behind the petty excuses of being out of practice for so long. my sham is soon over.
+
+const data = `\*data here*\`
+
+const splitData = data.split("\n");
+
+const instructions = splitData.map(x => x.split(" "))
+
+const checkLoop = (data) => {
+  let acc = 0;
+  let loop = false;
+  let end = false;
+  let i = 0;
+  const last = data.length;
+  const hist = new Set();
+  let ins = data;
+
+  for (let j = 0; j < last; j++) {
+    hist.clear();
+    i = 0;
+    acc = 0;
+    
+    if (ins[j][0] === "nop") {
+      ins[j][0] = "jmp";
+    } else if (ins[j][0] === "jmp") {
+      ins[j][0] = "nop";
+    };
+    if (ins[j][0] === "nop" || ins[j][0] === "jmp"){
+      while (loop === false && end === false) {
+        if (ins[i][0] === "nop") {
+          if (hist.has(i)) {
+            loop = true;
+          } else {
+            hist.add(i);
+            i++;
+          };
+        } else if (ins[i][0] === "acc") {
+          if(hist.has(i)) {
+            loop = true;
+          } else {
+            hist.add(i);
+            acc += parseInt(ins[i][1]);
+            i++;
+          };
+        } else if (ins[i][0] === "jmp") {
+          if (hist.has(i)) {
+            loop = true;
+          } else {
+            hist.add(i)
+            i += parseInt(ins[i][1]);
+          };
+        };
+        if (i === last) {
+          end = true;
+          console.log("last1");
+          console.log(ins[j])
+          break;
+        };
+      };
+    };
+    if (ins[j][0] === "nop") {
+      ins[j][0] = "jmp";
+    } else if (ins[j][0] === "jmp") {
+      ins[j][0] = "nop";
+    };
+    if (end === true) {
+      console.log("last2");
+      break;
+    };
+    loop = false;
+  }
+
+  return (end !== true ? "looped :(" : `solved! acc: ${acc}`);
+}
+
+console.log(checkLoop(instructions));
