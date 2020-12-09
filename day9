@@ -1,0 +1,148 @@
+// some redundancies in linked list class cause I reused it from a template I made earlier.
+
+const data = /* data goes here */
+
+const splitData = data.split("\n").map(x => x = parseInt(x));
+
+class LinkedList {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+  };
+
+  addToHead(value) {
+    const newNode = new Node(value, this.head, null);
+    if (this.head) {
+      this.head.prev = newNode;
+    } else {
+      this.tail = newNode;
+    };
+    this.head = newNode;
+  };
+
+  addToTail(value) {
+    const newNode = new Node(value, null, this.tail);
+    if(this.tail) {
+      this.tail.next = newNode;
+    } else {
+      this.head = newNode;
+    };
+    this.tail = newNode;
+  };
+
+  removeHead() {
+    if (!this.head) {
+      return null;
+    };
+    const val = this.head.value;
+    this.head = this.head.next;
+    if (this.head) {
+      this.head.prev = null;
+    } else {
+      this.tail = null;
+    };
+    return val;
+  };
+
+  removeTail() {
+    if (!this.tail) {
+      return null;
+    };
+    const val = this.tail.value;
+    this.tail = this.tail.prev;
+    if (this.tail) {
+      this.tail.next = null;
+    } else {
+      this.head = null;
+    };
+    return val;
+  };
+
+  isValid(value) {
+    const hist = new Set();
+    let currentNode = this.head;
+    let valid = false;
+    let checkNum = null;
+    while(currentNode && !valid) {
+      checkNum = value - currentNode.value;
+      // console.log(value, currentNode.value, checkNum);
+      if (hist.has(checkNum)) {
+        valid = true;
+      };
+      hist.add(currentNode.value);
+      currentNode = currentNode.next
+    };
+    hist.clear();
+    return valid;
+  };
+
+  findSum() {
+    let result = 0;
+    let currentNode = this.head;
+    while(currentNode) {
+      result += currentNode.value;
+      currentNode = currentNode.next;
+    };
+
+    return result;
+  };
+
+  makeArray() {
+    let result = [];
+    let currentNode = this.head;
+    while (currentNode) {
+      result.push(currentNode.value);
+      currentNode = currentNode.next;
+    };
+    return result;
+  }
+
+}
+
+class Node {
+  constructor(value, next, prev) {
+    this.value = value;
+    this.next = next;
+    this.prev = prev;
+  }
+}
+
+
+const findVuln = (data) => {
+  const workList = new LinkedList();
+  for (let i = 0; i < 25; i++) {
+    workList.addToTail(data[i]);
+  };
+
+  for (let i = 25; i < data.length; i++) {
+    if (workList.isValid(data[i])) {
+      workList.removeHead();
+      workList.addToTail(data[i]);
+    } else {
+      return data[i];
+    };
+  };
+  return "number not found"
+};
+
+const findSet = (data) => {
+  const target = findVuln(data);
+  const workList = new LinkedList();
+
+  for (let i = 0; i < data.length; i++) {
+    workList.addToTail(data[i]);
+    while (workList.findSum() > target) {
+      workList.removeHead();
+    };
+    if (workList.findSum() === target) {
+      return workList.makeArray();
+    };
+  };
+  return "error"
+};
+
+const resultArr = findSet(splitData).sort((a, b) => {
+  return a - b
+})
+
+console.log(resultArr[0] + resultArr[resultArr.length - 1])
